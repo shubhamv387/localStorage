@@ -56,7 +56,7 @@ document.getElementById("printBtn").addEventListener("click", () => {
       if (localStorage.key(i) == "userDetails") {
         noUserDetails = false;
         let showDetails = JSON.parse(localStorage.getItem("userDetails"));
-        console.log(showDetails);
+        //console.log(showDetails);
         for (let i = 0; i < showDetails.length; i++) {
           console.log(
             "NAME:",
