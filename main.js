@@ -1,23 +1,14 @@
 const form = document.getElementById("my-form");
-// console.log(localStorage.length);
+// console.log(localStorage);
 // console.log(JSON.parse(localStorage.getItem("userDetails")));
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  if (localStorage.length != 0) {
-    for (let i = 0; i < localStorage.length; i++) {
-      if (localStorage.key(i) == "userDetails") {
-        var userDetails = JSON.parse(localStorage.getItem("userDetails"));
-        //console.log(userDetails);
-        break;
-      } else var userDetails = [];
-    }
-  } else var userDetails = [];
-
   const msg = document.querySelector(".msg");
   const nameInput = document.getElementById("name");
   const emailInput = document.getElementById("email");
+  const phoneInput = document.getElementById("phone");
 
   if (nameInput.value === "" || emailInput.value === "") {
     // alert("Please enter all fields");
@@ -32,23 +23,33 @@ form.addEventListener("submit", (e) => {
     var userObj = {
       name: nameInput.value,
       email: emailInput.value,
+      phone: phoneInput.value,
     };
 
-    userDetails.push(userObj);
+    let users = document.querySelector("#users");
+    //create new li item
+    let user = document.createElement("li");
+    user.className = "user";
 
-    let userDetailsJSON = JSON.stringify(userDetails);
+    user.appendChild(
+      document.createTextNode(
+        `Name: ${userObj.name}, Email: ${userObj.email}, Phone: ${userObj.phone}`
+      )
+    );
+    // console.log(user);
 
-    // console.log(userDetails);
+    users.appendChild(user);
 
-    localStorage.setItem("userDetails", userDetailsJSON);
-    // localStorage.setItem("email", userDetails);
+    let userDetailsJSON = JSON.stringify(userObj);
+    localStorage.setItem(userObj.email, userDetailsJSON);
 
     nameInput.value = "";
     emailInput.value = "";
+    phoneInput.value = "";
   }
 });
 
-document.getElementById("printBtn").addEventListener("click", () => {
+/* document.getElementById("printBtn").addEventListener("click", () => {
   if (localStorage.length == 0) console.log("Add your first user now!");
   else {
     let noUserDetails = true;
@@ -70,4 +71,4 @@ document.getElementById("printBtn").addEventListener("click", () => {
     }
     if (noUserDetails) console.log("Add your first user now!");
   }
-});
+}); */
