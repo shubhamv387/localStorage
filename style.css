@@ -68,6 +68,21 @@ header {
   background: #444;
 }
 
+.delBtn {
+  display: block;
+  padding: 10px 15px;
+  background: rgb(218, 3, 3);
+  border: 0;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+  margin: 5px 0;
+}
+
+.delBtn:hover {
+  background: rgb(187, 3, 3);
+}
+
 .bg-dark {
   background: #333;
   color: #fff;

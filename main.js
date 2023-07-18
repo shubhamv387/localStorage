@@ -33,9 +33,24 @@ form.addEventListener("submit", (e) => {
 
     user.appendChild(
       document.createTextNode(
-        `Name: ${userObj.name}, Email: ${userObj.email}, Phone: ${userObj.phone}`
+        `Name: ${userObj.name}, Phone: ${userObj.phone}, Email: `
       )
     );
+
+    //create span tag for email
+    let span = document.createElement("span");
+    span.appendChild(document.createTextNode(userObj.email));
+    // console.log(span);
+
+    user.appendChild(span);
+
+    //creare detete btn
+    delBtn = document.createElement("button");
+    delBtn.className = "delBtn";
+    delBtn.appendChild(document.createTextNode("DELETE"));
+
+    user.appendChild(delBtn);
+
     // console.log(user);
 
     users.appendChild(user);
@@ -46,6 +61,14 @@ form.addEventListener("submit", (e) => {
     nameInput.value = "";
     emailInput.value = "";
     phoneInput.value = "";
+  }
+});
+
+//remove user details from browser list and localStorage.
+users.addEventListener("click", (e) => {
+  if (e.target.classList.contains("delBtn")) {
+    localStorage.removeItem(e.target.previousSibling.textContent);
+    users.removeChild(e.target.parentElement);
   }
 });
 
