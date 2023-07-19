@@ -1,3 +1,4 @@
+showOnReload();
 const form = document.getElementById("my-form");
 // console.log(localStorage);
 // console.log(JSON.parse(localStorage.getItem("userDetails")));
@@ -16,7 +17,10 @@ form.addEventListener("submit", (e) => {
     msg.innerHTML = "Please enter all fields";
 
     // Remove error after 3 seconds
-    setTimeout(() => msg.remove(), 3000);
+    setTimeout(() => {
+      msg.classList.remove("error");
+      msg.innerHTML = "";
+    }, 3000);
   } else {
     // console.log(`Name: ${nameInput.value}`);
     // console.log(`Email: ${emailInput.value}`);
@@ -82,4 +86,13 @@ function showUserOnScreen(userObj) {
     localStorage.removeItem(userObj.email);
     users.removeChild(user);
   });
+}
+
+// Show the user details previously saved
+
+function showOnReload() {
+  for (let i = 0; i < localStorage.length; i++) {
+    var showDetails = JSON.parse(localStorage.getItem(localStorage.key(i)));
+    showUserOnScreen(showDetails);
+  }
 }
