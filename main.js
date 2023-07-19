@@ -20,43 +20,15 @@ form.addEventListener("submit", (e) => {
   } else {
     // console.log(`Name: ${nameInput.value}`);
     // console.log(`Email: ${emailInput.value}`);
-    var userObj = {
+    let userObj = {
       name: nameInput.value,
       email: emailInput.value,
       phone: phoneInput.value,
     };
 
-    let users = document.querySelector("#users");
-    //create new li item
-    let user = document.createElement("li");
-    user.className = "user";
-
-    user.appendChild(
-      document.createTextNode(
-        `Name: ${userObj.name}, Phone: ${userObj.phone}, Email: `
-      )
-    );
-
-    //create span tag for email
-    let span = document.createElement("span");
-    span.appendChild(document.createTextNode(userObj.email));
-    // console.log(span);
-
-    user.appendChild(span);
-
-    //creare detete btn
-    delBtn = document.createElement("button");
-    delBtn.className = "delBtn";
-    delBtn.appendChild(document.createTextNode("DELETE"));
-
-    user.appendChild(delBtn);
-
-    // console.log(user);
-
-    users.appendChild(user);
-
-    let userDetailsJSON = JSON.stringify(userObj);
-    localStorage.setItem(userObj.email, userDetailsJSON);
+    let userObjJSON = JSON.stringify(userObj);
+    localStorage.setItem(userObj.email, userObjJSON);
+    showUserOnScreen(userObj);
 
     nameInput.value = "";
     emailInput.value = "";
@@ -64,34 +36,50 @@ form.addEventListener("submit", (e) => {
   }
 });
 
-//remove user details from browser list and localStorage.
-users.addEventListener("click", (e) => {
-  if (e.target.classList.contains("delBtn")) {
-    localStorage.removeItem(e.target.previousSibling.textContent);
-    users.removeChild(e.target.parentElement);
-  }
-});
+function showUserOnScreen(userObj) {
+  let users = document.querySelector("#users");
+  //create new li item
+  let user = document.createElement("li");
+  user.className = "user";
 
-/* document.getElementById("printBtn").addEventListener("click", () => {
-  if (localStorage.length == 0) console.log("Add your first user now!");
-  else {
-    let noUserDetails = true;
-    for (let i = 0; i < localStorage.length; i++) {
-      if (localStorage.key(i) == "userDetails") {
-        noUserDetails = false;
-        let showDetails = JSON.parse(localStorage.getItem("userDetails"));
-        //console.log(showDetails);
-        for (let i = 0; i < showDetails.length; i++) {
-          console.log(
-            "NAME:",
-            showDetails[i].name + ", " + "E-MAIL:",
-            showDetails[i].email
-          );
-        }
-        console.log("\n");
-        break;
-      }
-    }
-    if (noUserDetails) console.log("Add your first user now!");
-  }
-}); */
+  user.innerHTML =
+    "<span>Name: </span>" +
+    userObj.name +
+    "<br> <span>Email: </span>" +
+    userObj.email +
+    "<br> <span>Phone: </span>" +
+    userObj.phone +
+    "<br>";
+
+  //creare edit btn
+  let editBtn = document.createElement("button");
+  editBtn.className = "editBtn";
+  editBtn.appendChild(document.createTextNode("EDIT"));
+
+  user.appendChild(editBtn);
+  users.appendChild(user);
+
+  //edit user details function.
+  editBtn.addEventListener("click", () => {
+    document.getElementById("name").value = userObj.name;
+    document.getElementById("email").value = userObj.email;
+    document.getElementById("phone").value = userObj.phone;
+    document.getElementById("name").focus();
+    localStorage.removeItem(userObj.email);
+    users.removeChild(user);
+  });
+
+  //creare detete btn
+  let delBtn = document.createElement("button");
+  delBtn.className = "delBtn";
+  delBtn.appendChild(document.createTextNode("DELETE"));
+
+  user.appendChild(delBtn);
+  users.appendChild(user);
+
+  //remove user details from browser list and localStorage.
+  delBtn.addEventListener("click", () => {
+    localStorage.removeItem(userObj.email);
+    users.removeChild(user);
+  });
+}
