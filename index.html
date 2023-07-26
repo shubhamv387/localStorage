@@ -28,7 +28,14 @@
           <label for="phone">Phone:</label>
           <input type="tel" id="phone" />
         </div>
-        <input class="btn" type="submit" value="Submit" />
+        <input class="btn" id="submitbtn" type="submit" value="Submit" />
+        <input
+          class="btn"
+          style="display: none"
+          id="updatebtn"
+          type="button"
+          value="Update"
+        />
         <!-- <input
           class="btn"
           id="printBtn"
@@ -47,5 +54,6 @@
     </section>
 
     <script src="main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
   </body>
 </html>

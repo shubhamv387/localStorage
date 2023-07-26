@@ -1,4 +1,3 @@
-showOnReload();
 const form = document.getElementById("my-form");
 // console.log(localStorage);
 // console.log(JSON.parse(localStorage.getItem("userDetails")));
@@ -30,9 +29,18 @@ form.addEventListener("submit", (e) => {
       phone: phoneInput.value,
     };
 
-    let userObjJSON = JSON.stringify(userObj);
-    localStorage.setItem(userObj.email, userObjJSON);
-    showUserOnScreen(userObj);
+    // let userObjJSON = JSON.stringify(userObj);
+
+    axios
+      .post(
+        "https://crudcrud.com/api/985b2d5c2b7444beab9ea3b32a16df82/appointmentDatas",
+        userObj
+      )
+      .then((response) => {
+        showUserOnScreen(response.data);
+        // console.log(response);
+      });
+    // localStorage.setItem(userObj.email, userObjJSON);
 
     nameInput.value = "";
     emailInput.value = "";
@@ -61,15 +69,48 @@ function showUserOnScreen(userObj) {
   editBtn.appendChild(document.createTextNode("EDIT"));
 
   user.appendChild(editBtn);
-  users.appendChild(user);
+  // users.appendChild(user);
 
   //edit user details function.
   editBtn.addEventListener("click", () => {
-    document.getElementById("name").value = userObj.name;
-    document.getElementById("email").value = userObj.email;
-    document.getElementById("phone").value = userObj.phone;
-    document.getElementById("name").focus();
-    localStorage.removeItem(userObj.email);
+    // changing the original display styles of both btns
+    document.getElementById("submitbtn").style.display = "none";
+    document.getElementById("updatebtn").style.display = "block";
+
+    const updateName = document.getElementById("name");
+    const updateEmail = document.getElementById("email");
+    const updatePhone = document.getElementById("phone");
+    updateName.value = userObj.name;
+    updateEmail.value = userObj.email;
+    updatePhone.value = userObj.phone;
+    updateName.focus();
+
+    // localStorage.removeItem(userObj.email);
+    document.getElementById("updatebtn").addEventListener("click", () => {
+      let newUserObj = {
+        name: updateName.value,
+        email: updateEmail.value,
+        phone: updatePhone.value,
+      };
+      axios
+        .put(
+          `https://crudcrud.com/api/985b2d5c2b7444beab9ea3b32a16df82/appointmentDatas/${userObj._id}`,
+          newUserObj
+        )
+        .then((response) => {
+          showUserOnScreen(newUserObj);
+          updateName.value = "";
+          updateEmail.value = "";
+          updatePhone.value = "";
+
+          // changing back to the original display styles of both btns
+          document.getElementById("submitbtn").style.display = "block";
+          document.getElementById("updatebtn").style.display = "none";
+          console.log(response);
+        })
+        .catch((err) => console.log(err));
+    });
+
     users.removeChild(user);
   });
 
@@ -83,16 +124,29 @@ function showUserOnScreen(userObj) {
 
   //remove user details from browser list and localStorage.
   delBtn.addEventListener("click", () => {
-    localStorage.removeItem(userObj.email);
+    // localStorage.removeItem(userObj.email);
+    axios
+      .delete(
+        `https://crudcrud.com/api/985b2d5c2b7444beab9ea3b32a16df82/appointmentDatas/${userObj._id}`
+      )
+      .then((response) => console.log(response))
+      .catch((err) => console.log(err));
+
     users.removeChild(user);
   });
 }
 
 // Show the user details previously saved
-
-function showOnReload() {
-  for (let i = 0; i < localStorage.length; i++) {
-    var showDetails = JSON.parse(localStorage.getItem(localStorage.key(i)));
-    showUserOnScreen(showDetails);
-  }
-}
+window.addEventListener("DOMContentLoaded", () => {
+  axios
+    .get(
+      "https://crudcrud.com/api/985b2d5c2b7444beab9ea3b32a16df82/appointmentDatas"
+    )
+    .then((response) => {
+      for (let i = 0; i < response.data.length; i++) {
+        // console.log(response.data[i]);
+        showUserOnScreen(response.data[i]);
+      }
+    })
+    .catch((err) => console.log(err));
+});
