@@ -31,21 +31,31 @@ form.addEventListener("submit", (e) => {
 
     // let userObjJSON = JSON.stringify(userObj);
 
+    // Checking for the duplicate email Address
     axios
-      .post(
-        "https://crudcrud.com/api/c88fd311182a4a8b9d281bae0354dd5c/appointmentDatas",
-        userObj
+      .get(
+        "https://crudcrud.com/api/4deddbadc51d4c628a50649a9b5715d8/appointmentDatas"
       )
       .then((response) => {
-        showUserOnScreen(response.data);
-        // console.log(response);
-      })
-      .catch((err) => console.log(err.message));
-    // localStorage.setItem(userObj.email, userObjJSON);
+        if (!isEmailAlreadyExists(response, userObj)) {
+          axios
+            .post(
+              "https://crudcrud.com/api/4deddbadc51d4c628a50649a9b5715d8/appointmentDatas",
+              userObj
+            )
+            .then((response) => {
+              showUserOnScreen(response.data);
+              console.log(response.data);
 
-    nameInput.value = "";
-    emailInput.value = "";
-    phoneInput.value = "";
+              nameInput.value = "";
+              emailInput.value = "";
+              phoneInput.value = "";
+            })
+            .catch((err) => console.log(err.message));
+          // localStorage.setItem(userObj.email, userObjJSON);
+        }
+      })
+      .catch((err) => console.log(err));
   }
 });
 
@@ -62,6 +72,8 @@ function showUserOnScreen(userObj) {
     userObj.email +
     "<br> <span>Phone: </span>" +
     userObj.phone +
+    "<br> <span>Id: </span>" +
+    userObj._id +
     "<br>";
 
   //creare edit btn
@@ -70,17 +82,25 @@ function showUserOnScreen(userObj) {
   editBtn.appendChild(document.createTextNode("EDIT"));
 
   user.appendChild(editBtn);
-  // users.appendChild(user);
+
+  //creare detete btn
+  let delBtn = document.createElement("button");
+  delBtn.className = "delBtn";
+  delBtn.appendChild(document.createTextNode("DELETE"));
+
+  user.appendChild(delBtn);
+  users.appendChild(user);
 
   //edit / update user details function.
   editBtn.addEventListener("click", () => {
+    console.log(userObj);
     // changing the original display styles of both btns
     document.getElementById("submitbtn").style.display = "none";
     document.getElementById("updatebtn").style.display = "block";
 
-    const updateName = document.getElementById("name");
-    const updateEmail = document.getElementById("email");
-    const updatePhone = document.getElementById("phone");
+    let updateName = document.getElementById("name");
+    let updateEmail = document.getElementById("email");
+    let updatePhone = document.getElementById("phone");
     updateName.value = userObj.name;
     updateEmail.value = userObj.email;
     updatePhone.value = userObj.phone;
@@ -93,14 +113,29 @@ function showUserOnScreen(userObj) {
         email: updateEmail.value,
         phone: updatePhone.value,
       };
+
       axios
         .put(
-          `https://crudcrud.com/api/c88fd311182a4a8b9d281bae0354dd5c/appointmentDatas/${userObj._id}`,
+          `https://crudcrud.com/api/4deddbadc51d4c628a50649a9b5715d8/appointmentDatas/${userObj._id}`,
           newUserObj
         )
         .then((response) => {
           users.removeChild(user);
-          showUserOnScreen(newUserObj);
+          axios
+            .get(
+              "https://crudcrud.com/api/4deddbadc51d4c628a50649a9b5715d8/appointmentDatas"
+            )
+            .then((response) => {
+              for (let i = 0; i < response.data.length; i++) {
+                // console.log(response.data[i]);
+                if (response.data[i]._id === userObj._id) {
+                  showUserOnScreen(response.data[i]);
+                  break;
+                }
+              }
+            })
+            .catch((err) => console.log(err.message));
+          // showUserOnScreen(newUserObj);
           updateName.value = "";
           updateEmail.value = "";
           updatePhone.value = "";
@@ -108,31 +143,25 @@ function showUserOnScreen(userObj) {
           // changing back to the original display styles of both btns
           document.getElementById("submitbtn").style.display = "block";
           document.getElementById("updatebtn").style.display = "none";
+          console.log(newUserObj);
           console.log(response);
         })
         .catch((err) => console.log(err.message));
     });
   });
 
-  //creare detete btn
-  let delBtn = document.createElement("button");
-  delBtn.className = "delBtn";
-  delBtn.appendChild(document.createTextNode("DELETE"));
-
-  user.appendChild(delBtn);
-  users.appendChild(user);
-
   //remove user details from browser list and localStorage.
   delBtn.addEventListener("click", () => {
     // localStorage.removeItem(userObj.email);
     axios
       .delete(
-        `https://crudcrud.com/api/c88fd311182a4a8b9d281bae0354dd5c/appointmentDatas/${userObj._id}`
+        `https://crudcrud.com/api/4deddbadc51d4c628a50649a9b5715d8/appointmentDatas/${userObj._id}`
       )
-      .then((response) => console.log(response))
+      .then((response) => {
+        console.log(response);
+        users.removeChild(user);
+      })
       .catch((err) => console.log(err.message));
-
-    users.removeChild(user);
   });
 }
 
@@ -140,7 +169,7 @@ function showUserOnScreen(userObj) {
 window.addEventListener("DOMContentLoaded", () => {
   axios
     .get(
-      "https://crudcrud.com/api/c88fd311182a4a8b9d281bae0354dd5c/appointmentDatas"
+      "https://crudcrud.com/api/4deddbadc51d4c628a50649a9b5715d8/appointmentDatas"
     )
     .then((response) => {
       for (let i = 0; i < response.data.length; i++) {
@@ -150,3 +179,28 @@ window.addEventListener("DOMContentLoaded", () => {
     })
     .catch((err) => console.log(err.message));
 });
+
+// Check email fumction while adding new user data
+function isEmailAlreadyExists(response, userObj) {
+  let isEmailExists = false;
+  const msg = document.querySelector(".msg");
+
+  for (let i = 0; i < response.data.length; i++) {
+    if (response.data[i].email === userObj.email) {
+      isEmailExists = true;
+      msg.classList.add("error");
+      msg.innerHTML = "Email already exists";
+      document.getElementById("email").focus();
+
+      // Remove error after 3 seconds
+      setTimeout(() => {
+        msg.classList.remove("error");
+        msg.innerHTML = "";
+      }, 3000);
+
+      break;
+    }
+  }
+  // console.log(isEmailExists);
+  return isEmailExists;
+}
