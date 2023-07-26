@@ -33,13 +33,14 @@ form.addEventListener("submit", (e) => {
 
     axios
       .post(
-        "https://crudcrud.com/api/985b2d5c2b7444beab9ea3b32a16df82/appointmentDatas",
+        "https://crudcrud.com/api/c88fd311182a4a8b9d281bae0354dd5c/appointmentDatas",
         userObj
       )
       .then((response) => {
         showUserOnScreen(response.data);
         // console.log(response);
-      });
+      })
+      .catch((err) => console.log(err.message));
     // localStorage.setItem(userObj.email, userObjJSON);
 
     nameInput.value = "";
@@ -71,7 +72,7 @@ function showUserOnScreen(userObj) {
   user.appendChild(editBtn);
   // users.appendChild(user);
 
-  //edit user details function.
+  //edit / update user details function.
   editBtn.addEventListener("click", () => {
     // changing the original display styles of both btns
     document.getElementById("submitbtn").style.display = "none";
@@ -94,7 +95,7 @@ function showUserOnScreen(userObj) {
       };
       axios
         .put(
-          `https://crudcrud.com/api/985b2d5c2b7444beab9ea3b32a16df82/appointmentDatas/${userObj._id}`,
+          `https://crudcrud.com/api/c88fd311182a4a8b9d281bae0354dd5c/appointmentDatas/${userObj._id}`,
           newUserObj
         )
         .then((response) => {
@@ -108,7 +109,7 @@ function showUserOnScreen(userObj) {
           document.getElementById("updatebtn").style.display = "none";
           console.log(response);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err.message));
     });
 
     users.removeChild(user);
@@ -127,10 +128,10 @@ function showUserOnScreen(userObj) {
     // localStorage.removeItem(userObj.email);
     axios
       .delete(
-        `https://crudcrud.com/api/985b2d5c2b7444beab9ea3b32a16df82/appointmentDatas/${userObj._id}`
+        `https://crudcrud.com/api/c88fd311182a4a8b9d281bae0354dd5c/appointmentDatas/${userObj._id}`
       )
       .then((response) => console.log(response))
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err.message));
 
     users.removeChild(user);
   });
@@ -140,7 +141,7 @@ function showUserOnScreen(userObj) {
 window.addEventListener("DOMContentLoaded", () => {
   axios
     .get(
-      "https://crudcrud.com/api/985b2d5c2b7444beab9ea3b32a16df82/appointmentDatas"
+      "https://crudcrud.com/api/c88fd311182a4a8b9d281bae0354dd5c/appointmentDatas"
     )
     .then((response) => {
       for (let i = 0; i < response.data.length; i++) {
@@ -148,5 +149,5 @@ window.addEventListener("DOMContentLoaded", () => {
         showUserOnScreen(response.data[i]);
       }
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err.message));
 });
