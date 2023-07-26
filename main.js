@@ -99,6 +99,7 @@ function showUserOnScreen(userObj) {
           newUserObj
         )
         .then((response) => {
+          users.removeChild(user);
           showUserOnScreen(newUserObj);
           updateName.value = "";
           updateEmail.value = "";
@@ -111,8 +112,6 @@ function showUserOnScreen(userObj) {
         })
         .catch((err) => console.log(err.message));
     });
-
-    users.removeChild(user);
   });
 
   //creare detete btn
