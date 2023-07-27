@@ -10,7 +10,11 @@ form.addEventListener("submit", (e) => {
   const emailInput = document.getElementById("email");
   const phoneInput = document.getElementById("phone");
 
-  if (nameInput.value === "" || emailInput.value === "") {
+  if (
+    nameInput.value === "" ||
+    emailInput.value === "" ||
+    phoneInput.value === ""
+  ) {
     // alert("Please enter all fields");
     msg.classList.add("error");
     msg.innerHTML = "Please enter all fields";
@@ -43,9 +47,9 @@ form.addEventListener("submit", (e) => {
               "https://crudcrud.com/api/4deddbadc51d4c628a50649a9b5715d8/appointmentDatas",
               userObj
             )
-            .then((response) => {
-              showUserOnScreen(response.data);
-              console.log(response.data);
+            .then((res) => {
+              showUserOnScreen(res.data);
+              console.log(res.data);
 
               nameInput.value = "";
               emailInput.value = "";
@@ -72,8 +76,6 @@ function showUserOnScreen(userObj) {
     userObj.email +
     "<br> <span>Phone: </span>" +
     userObj.phone +
-    "<br> <span>Id: </span>" +
-    userObj._id +
     "<br>";
 
   //creare edit btn
@@ -107,7 +109,11 @@ function showUserOnScreen(userObj) {
     updateName.focus();
 
     // localStorage.removeItem(userObj.email);
-    document.getElementById("updatebtn").addEventListener("click", () => {
+
+    //While adding event listeners to the "EDIT" button, I encountered an issue. Clicking the "EDIT" button multiple times registers multiple event listeners on the "UPDATE" button. This leads to errors when clicking the "UPDATE" button, as all the registered event listeners are triggered, causing data changes for each "EDIT" button clicked.
+
+    //and then I added (.onclick) eventHandele and this problem gone.
+    document.getElementById("updatebtn").onclick = () => {
       let newUserObj = {
         name: updateName.value,
         email: updateEmail.value,
@@ -147,7 +153,7 @@ function showUserOnScreen(userObj) {
           console.log(response);
         })
         .catch((err) => console.log(err.message));
-    });
+    };
   });
 
   //remove user details from browser list and localStorage.
