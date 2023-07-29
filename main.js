@@ -122,7 +122,6 @@ function showUserOnScreen(userObj) {
         phone: updatePhone.value,
       };
 
-      //helo world
       if (newUserObj.email == userObj.email) {
         axios
           .put(
