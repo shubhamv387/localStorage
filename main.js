@@ -38,13 +38,13 @@ form.addEventListener("submit", (e) => {
     // Checking for the duplicate email Address
     axios
       .get(
-        "https://crudcrud.com/api/4deddbadc51d4c628a50649a9b5715d8/appointmentDatas"
+        "https://crudcrud.com/api/776f0d348e204059973c80dcfe9c70b4/appointmentDatas"
       )
       .then((response) => {
         if (!isEmailAlreadyExists(response, userObj)) {
           axios
             .post(
-              "https://crudcrud.com/api/4deddbadc51d4c628a50649a9b5715d8/appointmentDatas",
+              "https://crudcrud.com/api/776f0d348e204059973c80dcfe9c70b4/appointmentDatas",
               userObj
             )
             .then((res) => {
@@ -76,6 +76,8 @@ function showUserOnScreen(userObj) {
     userObj.email +
     "<br> <span>Phone: </span>" +
     userObj.phone +
+    "<br> <span>Id: </span>" +
+    userObj._id +
     "<br>";
 
   //creare edit btn
@@ -85,7 +87,7 @@ function showUserOnScreen(userObj) {
 
   user.appendChild(editBtn);
 
-  //creare detete btn
+  //create detete btn
   let delBtn = document.createElement("button");
   delBtn.className = "delBtn";
   delBtn.appendChild(document.createTextNode("DELETE"));
@@ -95,7 +97,7 @@ function showUserOnScreen(userObj) {
 
   //edit / update user details function.
   editBtn.addEventListener("click", () => {
-    console.log(userObj);
+    // console.log(userObj);
     // changing the original display styles of both btns
     document.getElementById("submitbtn").style.display = "none";
     document.getElementById("updatebtn").style.display = "block";
@@ -112,7 +114,7 @@ function showUserOnScreen(userObj) {
 
     //While adding event listeners to the "EDIT" button, I encountered an issue. Clicking the "EDIT" button multiple times registers multiple event listeners on the "UPDATE" button. This leads to errors when clicking the "UPDATE" button, as all the registered event listeners are triggered, causing data changes for each "EDIT" button clicked.
 
-    //and then I added (.onclick) eventHandele and this problem gone.
+    //and then I added (.onclick) eventHandeler and this problem gone.
     document.getElementById("updatebtn").onclick = () => {
       let newUserObj = {
         name: updateName.value,
@@ -120,39 +122,86 @@ function showUserOnScreen(userObj) {
         phone: updatePhone.value,
       };
 
-      axios
-        .put(
-          `https://crudcrud.com/api/4deddbadc51d4c628a50649a9b5715d8/appointmentDatas/${userObj._id}`,
-          newUserObj
-        )
-        .then((response) => {
-          users.removeChild(user);
-          axios
-            .get(
-              "https://crudcrud.com/api/4deddbadc51d4c628a50649a9b5715d8/appointmentDatas"
-            )
-            .then((response) => {
-              for (let i = 0; i < response.data.length; i++) {
-                // console.log(response.data[i]);
-                if (response.data[i]._id === userObj._id) {
-                  showUserOnScreen(response.data[i]);
-                  break;
+      if (newUserObj.email == userObj.email) {
+        axios
+          .put(
+            `https://crudcrud.com/api/776f0d348e204059973c80dcfe9c70b4/appointmentDatas/${userObj._id}`,
+            newUserObj
+          )
+          .then((response) => {
+            users.removeChild(user);
+            axios
+              .get(
+                "https://crudcrud.com/api/776f0d348e204059973c80dcfe9c70b4/appointmentDatas"
+              )
+              .then((response) => {
+                for (let i = 0; i < response.data.length; i++) {
+                  // console.log(response.data[i]);
+                  if (response.data[i]._id === userObj._id) {
+                    showUserOnScreen(response.data[i]);
+                    break;
+                  }
                 }
-              }
-            })
-            .catch((err) => console.log(err.message));
-          // showUserOnScreen(newUserObj);
-          updateName.value = "";
-          updateEmail.value = "";
-          updatePhone.value = "";
+              })
+              .catch((err) => console.log(err.message));
+            // showUserOnScreen(newUserObj);
+            updateName.value = "";
+            updateEmail.value = "";
+            updatePhone.value = "";
 
-          // changing back to the original display styles of both btns
-          document.getElementById("submitbtn").style.display = "block";
-          document.getElementById("updatebtn").style.display = "none";
-          console.log(newUserObj);
-          console.log(response);
-        })
-        .catch((err) => console.log(err.message));
+            // changing back to the original display styles of both btns
+            document.getElementById("submitbtn").style.display = "block";
+            document.getElementById("updatebtn").style.display = "none";
+            // console.log(newUserObj);
+            // console.log(response);
+          })
+          .catch((err) => console.log(err.message));
+      } else {
+        // Checking for the duplicate email Address on updating
+        axios
+          .get(
+            "https://crudcrud.com/api/776f0d348e204059973c80dcfe9c70b4/appointmentDatas"
+          )
+          .then((response) => {
+            if (!isEmailAlreadyExists(response, newUserObj)) {
+              axios
+                .put(
+                  `https://crudcrud.com/api/776f0d348e204059973c80dcfe9c70b4/appointmentDatas/${userObj._id}`,
+                  newUserObj
+                )
+                .then((response) => {
+                  users.removeChild(user);
+                  axios
+                    .get(
+                      "https://crudcrud.com/api/776f0d348e204059973c80dcfe9c70b4/appointmentDatas"
+                    )
+                    .then((response) => {
+                      for (let i = 0; i < response.data.length; i++) {
+                        // console.log(response.data[i]);
+                        if (response.data[i]._id === userObj._id) {
+                          showUserOnScreen(response.data[i]);
+                          break;
+                        }
+                      }
+                    })
+                    .catch((err) => console.log(err.message));
+                  // showUserOnScreen(newUserObj);
+                  updateName.value = "";
+                  updateEmail.value = "";
+                  updatePhone.value = "";
+
+                  // changing back to the original display styles of both btns
+                  document.getElementById("submitbtn").style.display = "block";
+                  document.getElementById("updatebtn").style.display = "none";
+                  // console.log(newUserObj);
+                  // console.log(response);
+                })
+                .catch((err) => console.log(err.message));
+              // localStorage.setItem(userObj.email, userObjJSON);
+            }
+          })
+          .catch((err) => console.log(err));
+      }
     };
   });
 
@@ -161,7 +210,7 @@ function showUserOnScreen(userObj) {
     // localStorage.removeItem(userObj.email);
     axios
       .delete(
-        `https://crudcrud.com/api/4deddbadc51d4c628a50649a9b5715d8/appointmentDatas/${userObj._id}`
+        `https://crudcrud.com/api/776f0d348e204059973c80dcfe9c70b4/appointmentDatas/${userObj._id}`
       )
       .then((response) => {
         console.log(response);
@@ -175,7 +224,7 @@ function showUserOnScreen(userObj) {
 window.addEventListener("DOMContentLoaded", () => {
   axios
     .get(
-      "https://crudcrud.com/api/4deddbadc51d4c628a50649a9b5715d8/appointmentDatas"
+      "https://crudcrud.com/api/776f0d348e204059973c80dcfe9c70b4/appointmentDatas"
     )
     .then((response) => {
       for (let i = 0; i < response.data.length; i++) {
